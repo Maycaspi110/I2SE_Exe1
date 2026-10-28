@@ -1,39 +1,51 @@
 # Software Requirements Specification (SRS)
 
 ## 1. Introduction
-The system takes a 3D scan (NRRD) and a list of planes (CSV), and creates a video where each frame is a 2D cross-section of the scan along one plane.
-It is a command-line tool for doctors, researchers and developers of medical imaging software.
+The system takes a 3D scan (NRRD file) and a list of planes (CSV file), and creates a video. Each frame in the video is a 2D cross-section of the scan along one plane.
+
+The system is a command-line tool, with no graphical interface. It is meant for doctors, medical researchers and developers of medical imaging software.
 
 ```bash
 python Ex0.py <volume.nrrd> <planes.csv> <output.mp4>
 ```
 
 ## 2. Inputs and Outputs
-- **Input 1, volume (.nrrd):** a 3D matrix of size sx × sy × sz (each below 2^10), with unsigned integer values of 8, 16 or 32 bits.
-- **Input 2, planes (.csv):** one plane per row. 9 numbers = triangle, 12 numbers = trapezoid (3 or 4 points with x,y,z each).
-- **Output (.mp4):** one frame per row, in the same order, all frames the same size.
+**Inputs**
+- **Volume (.nrrd):** a 3D matrix of size sx × sy × sz (each from 1 up to 2^10 - 1). Each value is an unsigned integer of 8, 16 or 32 bits.
+- **Planes (.csv):** each row is one plane, given by 3 or 4 points with x,y,z each.
+  - 9 numbers = isosceles triangle.
+  - 12 numbers = isosceles trapezoid.
+
+**Output**
+- **Video (.mp4):** one frame per CSV row, in the same order as the rows. All frames have the same fixed size.
+- **Scaling to frame size:** the projection creates an image at natural scale (1 pixel = 1 voxel unit). A separate step then resizes it to the fixed frame size, keeping the aspect ratio. Any remaining area is padded with black (0).
 
 ## 3. Functional Requirements
-- **FR1:** The system reads the volume and the planes.
-- **FR2:** For each plane, it samples the volume along the plane to create a 2D image. A point outside the volume gets the value 0.
-- **FR3:** It scales values to 0-255 using the minimum and maximum of the whole volume, and pads each image with black to a fixed size.
-- **FR4:** It writes all images, in order, to the video file.
+- **FR1:** The system reads the volume from the NRRD file and the planes from the CSV file.
+- **FR2:** For each plane, the system samples the volume along the plane and creates a 2D image. A point outside the volume gets the value 0.
+- **FR3:** The system scales the values to 0-255, using the minimum and maximum of the whole volume (computed once), so the brightness is the same in all frames.
+- **FR4:** The system resizes each image to the fixed frame size, keeping the aspect ratio, and pads the remaining area with black (0).
+- **FR5:** The system writes all images, in order, to the MP4 file.
 
 ## 4. Non-Functional Requirements
-- **NFR1 (Performance):** for a 500×500×500 volume, at least 30 frames per second (target: 100). Computation should use vectorized code (e.g. NumPy).
-- **NFR2 (Stability):** no crash on valid input, and a clear error message on invalid input.
+- **NFR1 (Performance):** for a 500×500×500 volume, the system creates at least 30 frames per second (target: 100).
+- **NFR2 (Efficiency):** the computation uses vectorized code (for example NumPy) and not loops over single pixels, in order to meet NFR1.
+- **NFR3 (Stability):** the system does not crash on valid input, and prints a clear error message on invalid input.
 
-## 5. Error Handling
-The whole CSV is checked before any frame is created. If a row is invalid, the system prints its row number and exits without creating a video.
+## 5. Edge Cases and Error Handling
+The whole CSV is checked before any frame is created. If a row is invalid, the system prints all the invalid row numbers and exits without creating a video. No row is skipped, so the video always has one frame per CSV row.
 
-**Errors (message and exit):**
-- A file is missing, unreadable or empty, or the NRRD is not a 3D volume of unsigned integers.
-- A CSV row has a wrong number of values, a non-number, or identical points.
-- A triangle or trapezoid is not isosceles, or the 4 trapezoid points are not on one plane.
+**Errors (print a message and exit):**
+- A file is missing, unreadable or empty.
+- The NRRD file is not a 3D volume of unsigned integers.
+- A CSV row has a wrong number of values (not 9 or 12), or a value that is not a number.
+- A CSV row has two identical points (the plane is degenerate).
+- The plane is not isosceles: in a triangle `dist(a,b) != dist(a,c)`, and in a trapezoid the two legs have different lengths.
+- The 4 points of a trapezoid are not on one plane.
 - The output file cannot be written.
 
 **Not errors:**
-- A plane partly or fully outside the volume: those points are 0 (black).
-- Non-integer coordinates (e.g. 12.5): rounded to the nearest voxel.
-- All voxels have the same value: all frames are black.
-- A volume with a side of size 1: handled normally.
+- A plane that is partly or fully outside the volume: the points outside get 0 (black).
+- Non-integer coordinates (for example 12.5): rounded to the nearest voxel.
+- All voxels have the same value (min = max): all frames are black, so there is no division by zero.
+- A volume with a side of size 1: handled like any other volume.
