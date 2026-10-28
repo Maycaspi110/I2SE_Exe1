@@ -41,6 +41,10 @@ A video is created by running the algorithm once per plane and joining the image
    is never resized, so every pixel is a real value from the scan.
 6. **Normalization:** values are mapped to 0-255 using the global min and max of
    the whole volume, computed once. If min = max, the image is all black.
+   After scaling, values are clipped to 0-255 (`np.clip` in `normalize_to_uint8`,
+   `src/intensity.py`). This matters for points outside the volume: they have the
+   value 0, which can be below the volume minimum (for example min = 50) and would
+   scale to a negative number. The clip cuts it to 0, so it stays black.
 
 ## 5. Steps
 ```

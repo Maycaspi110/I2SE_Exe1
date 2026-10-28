@@ -42,7 +42,7 @@ python Ex0.py <volume.nrrd> <planes.csv> <output.mp4>
 - **FR1:** The system reads the volume from the NRRD file and the planes from the CSV file.
 - **FR2:** For each plane, the system samples the volume along the plane and creates a 2D image. A point outside the volume gets the value 0.
 - **FR3:** Each sample takes the value of the nearest voxel (no interpolation).
-- **FR4:** The system scales the values to 0-255, using the minimum and maximum of the whole volume (computed once), so the brightness is the same in all frames.
+- **FR4:** The system scales the values to 0-255, using the minimum and maximum of the whole volume (computed once), so the brightness is the same in all frames. Results are clipped to 0-255, so a point outside the volume (value 0), even when it is below the volume minimum, stays black.
 - **FR5:** The system pads each image with black (0), centered, up to the frame size, without resizing it.
 - **FR6:** The system writes all images, in order, to the MP4 file.
 
