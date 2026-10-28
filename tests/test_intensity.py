@@ -18,4 +18,4 @@ def test_below_min_is_black():
 
 def test_constant_volume_gives_zero():
     # min == max: no division by zero, result is black
-    assert normalize_to_uint8(7, 7, 7) == 0
+    assert normalize_to_uint8(7, 7, 7) == 0 
