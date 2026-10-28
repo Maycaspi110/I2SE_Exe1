@@ -27,3 +27,22 @@ def sample_voxel(volume, point):
     if 0 <= x < sx and 0 <= y < sy and 0 <= z < sz:
         return volume[x, y, z]
     return 0
+
+
+ # Build one row of the image: walk from point a1 to point a2
+    # in steps of length 1, and read the cube value at every step.
+def build_row(volume, a1, a2):
+    a1 = np.asarray(a1, dtype=np.float64)
+    a2 = np.asarray(a2, dtype=np.float64)
+
+    d12 = distance(a1, a2)           # how long the row is
+    if d12 == 0:
+        return [sample_voxel(volume, a1)]   # both points are the same: one pixel
+
+    step = unit_step(a1, a2)         # one step of length 1 towards a2
+    row = []
+    p = a1
+    for _ in range(int(d12) + 1):    # one pixel per step, including both ends
+        row.append(sample_voxel(volume, p))
+        p = p + step                 # move one step forward
+    return row

@@ -54,3 +54,20 @@ def test_sample_outside_returns_zero():
     # Outside the cube in every direction: black
     assert sample_voxel(volume, [5, 5, 5]) == 0
     assert sample_voxel(volume, [-1, 0, 0]) == 0
+
+
+from src.slicer import build_row
+
+
+ # Cube where the value equals x: cell x=0 holds 0, or 1, or 2..
+def test_build_row_reads_along_a_line():
+    volume = np.zeros((4, 1, 1))
+    for x in range(4):
+        volume[x, 0, 0] = x
+    # Walk from x=0 to x=3 along the x axis: expect 0,1,2,3
+    assert build_row(volume, [0, 0, 0], [3, 0, 0]) == [0, 1, 2, 3]
+
+
+def test_build_row_same_point_is_one_pixel():
+    volume = np.full((2, 2, 2), 9)
+    assert build_row(volume, [1, 1, 1], [1, 1, 1]) == [9]
