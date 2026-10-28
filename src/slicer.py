@@ -17,3 +17,13 @@ def unit_step(p, q):
     if d == 0:
         raise ValueError("cannot compute a direction between identical points")
     return (q - p) / d
+
+# Return the value of the volume at a 3D point.
+    # The point is rounded to the nearest voxel (our design decision).
+    # A point outside the volume gives 0 (black), as the assignment says.
+def sample_voxel(volume, point):
+    x, y, z = np.round(point).astype(int)
+    sx, sy, sz = volume.shape
+    if 0 <= x < sx and 0 <= y < sy and 0 <= z < sz:
+        return volume[x, y, z]
+    return 0
