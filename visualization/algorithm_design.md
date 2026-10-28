@@ -5,6 +5,8 @@ The algorithm takes a 3D volume M and a plane defined by 3 or 4 points, and
 returns a 2D image: the cross-section of the volume along that plane.
 A video is created by running the algorithm once per plane and joining the images.
 
+![Overview: a 3D matrix M is sampled along a plane p and projected onto a 2D image E](task-overview.svg)
+
 ## 2. Inputs and Outputs
 - **Input:** volume M (sx x sy x sz unsigned integers, 8/16/32 bit) and a plane:
   3 points (triangle) or 4 points (trapezoid). Both must be isosceles.
