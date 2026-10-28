@@ -35,15 +35,15 @@ python Ex0.py <volume.nrrd> <planes.csv> <output.mp4>
   - 12 numbers = isosceles trapezoid.
 
 **Output**
-- **Video (.mp4):** one frame per CSV row, in the same order as the rows. The video is grayscale, at 30 FPS. All frames have the same fixed size, which is the size of the largest image among all the planes.
-- **Scaling to frame size:** the projection creates an image at natural scale (1 pixel = 1 voxel unit). A separate step then resizes it to the fixed frame size, keeping the aspect ratio. Any remaining area is padded with black (0).
+- **Video (.mp4):** one frame per CSV row, in the same order as the rows. The video is grayscale, at 30 FPS. All frames have the same fixed size: the largest width and the largest height among all the planes.
+- **Frame size:** the projection creates an image at natural scale (1 pixel = 1 voxel unit). A separate step pads it with black (0), centered, up to the frame size. The image is never resized, so every pixel is a real value from the scan.
 
 ## 3. Functional Requirements
 - **FR1:** The system reads the volume from the NRRD file and the planes from the CSV file.
 - **FR2:** For each plane, the system samples the volume along the plane and creates a 2D image. A point outside the volume gets the value 0.
 - **FR3:** Each sample takes the value of the nearest voxel (no interpolation).
 - **FR4:** The system scales the values to 0-255, using the minimum and maximum of the whole volume (computed once), so the brightness is the same in all frames.
-- **FR5:** The system resizes each image to the fixed frame size, keeping the aspect ratio, and pads the remaining area with black (0).
+- **FR5:** The system pads each image with black (0), centered, up to the frame size, without resizing it.
 - **FR6:** The system writes all images, in order, to the MP4 file.
 
 ## 4. Non-Functional Requirements

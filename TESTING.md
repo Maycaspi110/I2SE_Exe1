@@ -36,7 +36,7 @@ Run the demo exactly as a user would:
 |----|-------|-----------------|
 | E1 | output.mp4 exists | yes |
 | E2 | number of frames | equals the number of CSV rows |
-| E3 | frame size | all frames 512x512 |
+| E3 | frame size | all frames have the same size: the largest width and height among all planes |
 | E4 | CSV with an invalid row | error message, no video created |
 | E5 | missing input file | clear error message |
 | E6 | run on D1 (MRI) | video opens, anatomy is visible (visual check) |

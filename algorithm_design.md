@@ -9,7 +9,7 @@ A video is created by running the algorithm once per plane and joining the image
 - **Input:** volume M (sx x sy x sz unsigned integers, 8/16/32 bit) and a plane:
   3 points (triangle) or 4 points (trapezoid). Both must be isosceles.
 - **Output:** a 2D matrix E of size ceil(Dab) x ceil(Dbc), later normalized and
-  resized to the fixed frame size.
+  padded with black to the fixed frame size.
 
 ## 3. Definitions
 - **start1, start2:** the start points of the two "runners".
@@ -33,10 +33,12 @@ A video is created by running the algorithm once per plane and joining the image
 4. **Isosceles validation:** the input plane must be isosceles (equal legs within
    a small tolerance). A plane that is not isosceles is rejected during CSV
    validation, before any frame is processed.
-5. **Scaling to frame size:** the projection produces an image at natural scale
-   (1 pixel = 1 voxel unit). A separate step then resizes it to the fixed frame
-   size of 512x512 (a single constant), preserving the aspect ratio.
-   Remaining area is padded with black (0).
+5. **Fixed frame size:** the frame size is the largest plane in the CSV. Before
+   processing, the size of every plane image is computed from its geometry, and
+   the frame width and height are the largest width and the largest height. The
+   projection produces each image at natural scale (1 pixel = 1 voxel unit), and a
+   separate step pads it with black (0), centered, up to the frame size. The image
+   is never resized, so every pixel is a real value from the scan.
 6. **Normalization:** values are mapped to 0-255 using the global min and max of
    the whole volume, computed once. If min = max, the image is all black.
 
@@ -67,7 +69,8 @@ project(M, start1, start2, b, c):
 ## 6. Full Pipeline
 ```
 read NRRD -> compute global min/max (once) -> validate entire CSV ->
-for each plane: project -> normalize -> resize to 512x512 -> write frame to MP4
+compute frame size (largest width and height over all planes) ->
+for each plane: project -> normalize -> pad to frame size -> write frame to MP4
 ```
 If any CSV row is invalid, all errors are reported and no video is created.
 
@@ -80,7 +83,7 @@ for 30 fps at 500x500). The projection is therefore vectorized with NumPy:
    p = a1(y) + dp(y) * x1, for all pixels at once.
 3. Round all points at once, and build a boolean mask of points inside the volume.
 4. Fetch all values with a single NumPy fancy-indexing operation; points outside get 0.
-5. Normalize and resize the whole image in one operation each.
+5. Normalize the whole image in one operation, then pad it with black.
 
 The volume is loaded and its global min/max computed once, not per frame.
 Target: at least 30 frames per second on a 500x500x500 volume.
