@@ -10,6 +10,8 @@ Scan the 3D matrix M along the given plane p and project the sampled values onto
 - Any sampled point along the plane that falls outside the boundaries of M is assigned a value of `0`.
 - **Performance Requirement:** Given a 500^3 byte matrix, the projection algorithm must run at a minimum of **30 FPS**, aiming for **100+ FPS**.
 
+![Task overview: a 3D matrix M is sampled along a plane p and projected onto a 2D image E](docs/task-overview.svg)
+
 ## 2. Project Scope
 ### Inputs:
 1. **`<file.nrrd>`:** A 3D volumetric data file containing the 3D matrix M (e.g., an MRI scan).
