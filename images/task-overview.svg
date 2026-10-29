@@ -14,7 +14,7 @@
   </defs>
 
   <rect width="900" height="540" rx="14" fill="#f6f8fa" stroke="#d3dce2"/>
-  <text x="30" y="42" font-size="20" font-weight="600" fill="#15202a">Ex1: slicing a 3D scan along a plane</text>
+  <text x="30" y="42" font-size="20" font-weight="600" fill="#15202a">plane-projection-3d: slicing a 3D scan along a plane</text>
 
   <!-- ===== 3D matrix M ===== -->
   <!-- hidden edges -->

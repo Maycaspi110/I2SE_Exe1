@@ -1,4 +1,6 @@
-# Ex1: 3D Volume Plane Projection
+# plane-projection-3d
+
+Ex1: 3D Volume Plane Projection
 
 ## 1. Problem Definition
 In this project, we receive a 3D matrix M with three axes (X, Y, Z) of size sx * sy * sz (where 1 <= sx, sy, sz < 2^10), representing a 3D medical scan. Each cell M[x][y][z] contains an unsigned integer value (8, 16, or 32-bit).

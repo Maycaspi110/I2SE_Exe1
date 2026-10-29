@@ -1,4 +1,4 @@
-# Software Requirements Specification (SRS)
+# plane-projection-3d: Software Requirements Specification (SRS)
 
 ## 1. Introduction
 The system takes a 3D scan (NRRD file) and a list of planes (CSV file), and creates a video. Each frame in the video is a 2D cross-section of the scan along one plane.
