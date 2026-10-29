@@ -42,7 +42,6 @@ def write_for_slicer(path, volume, voxel_mm=1.0):
         "space directions": np.diag([voxel_mm] * 3),
         "space origin": -(np.array(volume.shape) - 1) / 2 * voxel_mm,   # volume centered at 0
         "kinds": ["domain", "domain", "domain"],
-        "units": ["mm", "mm", "mm"],
         "encoding": "gzip",
     }
     nrrd.write(path, volume, header)
