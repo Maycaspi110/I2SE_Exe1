@@ -66,6 +66,22 @@ def figure(name, caption, voxel_mm):
     return np.vstack([header, np.hstack(panels)])
 
 
+def layers(name, caption, voxel_mm, heights=(10, 32, 50, 66, 90)):
+    # cross-sections at different heights z: what you see when you scroll through the layers
+    volume = load_volume(f"data-NRRD/{name}.nrrd")
+    vmin, vmax = volume.min(), volume.max()
+    x, y, z = np.eye(3)
+    panels = []
+    for height in heights:
+        center = (np.array(volume.shape) - 1) / 2
+        center[2] = height
+        panels.append(panel(volume, vmin, vmax, voxel_mm, f"Cross-section z = {height}", plane_points(center, x, y, 50, 50)))
+    header = np.zeros((34, PANEL * len(panels), 3), dtype=np.uint8)
+    text(header, caption, 8, 22, 0.5)
+    return np.vstack([header, np.hstack(panels)])
+
+
+
 def filmstrip(video_path, caption, count=6, size=165):
     # `count` frames, evenly spaced, taken from a result video
     video = cv2.VideoCapture(video_path)
@@ -97,6 +113,8 @@ if __name__ == "__main__":
         print(f"created images/{name}.png")
     cv2.imwrite("images/overview.png", np.vstack(figures))
     print("created images/overview.png")
+    cv2.imwrite("images/layers.png", layers("tree_trunk_slicer", "Layers of the 16-bit trunk: the cross-section changes with the height (thinner trunk, two branches)", 1.0))
+    print("created images/layers.png")
     strip = filmstrip("video/tree_trunk_slicer_tilt.mp4",
                       "Video of trunk_tilt.csv: the plane tilts from a cross-section to a lengthwise cut")
     cv2.imwrite("images/video_frames.png", strip)

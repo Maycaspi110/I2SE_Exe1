@@ -70,6 +70,8 @@ Expected and observed results:
 
 ![Cross-sections of the two tree trunk volumes](images/overview.png)
 
+![Layers of the trunk: the cross-section changes with the height](images/layers.png)
+
 ![Frames taken from the result video](images/video_frames.png)
 
 The result video is `video/tree_trunk_slicer_tilt.mp4`. The other plane files in `data-CSV/` (`trunk_sweep.csv`,

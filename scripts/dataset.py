@@ -17,20 +17,24 @@ def make_log(size=100):
 def make_slicer_log(size=100):
     # A 16-bit "tree trunk" for 3D Slicer. Same idea as make_log (rings around
     # the central axis), with growth rings of changing width, a soft center, a
-    # dark bark layer and a slightly bending axis, so the cuts look natural.
+    # bright bark layer and a slightly bending axis. The trunk gets thinner towards
+    # the top and has two branches, so every layer (z) looks different when you
+    # scroll through the slices.
     x, y, z = np.indices((size, size, size))
     center = (size - 1) / 2
     cx = center + 3 * np.sin(z / 22)             # the axis bends a little along z
     cy = center + 2 * np.cos(z / 30)
-    angle = np.arctan2(y - cy, x - cx)
     distance = np.sqrt((x - cx) ** 2 + (y - cy) ** 2)
-    distance = distance + 0.8 * np.sin(3 * angle + z / 15)   # rings are not perfect circles
     phase = distance * 0.38 + 0.3 * np.sin(distance * 0.1)   # ring width changes slowly
     wood = 1200 + 1300 * (np.sin(phase) + 1) / 2
-    radius = size / 2 - 1
+    radius = (size / 2 - 1) * (1 - 0.25 * z / (size - 1))    # thinner towards the top
     wood[distance < 3] = 800                      # soft center (pith)
     wood[distance > radius - 4] = 3400            # bright bark layer
     wood[distance > radius] = 0                   # air around the trunk
+    # two branches, they leave the trunk at different heights and directions
+    branch1 = ((y - cy) ** 2 + (z - 32) ** 2 < 5 ** 2) & (x > cx)
+    branch2 = ((x - cx) ** 2 + (z - 66) ** 2 < 4 ** 2) & (y < cy)
+    wood[(branch1 | branch2) & (distance > 3)] = 2400
     return wood.astype(np.uint16)
 
 
