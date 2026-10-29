@@ -28,7 +28,7 @@ def make_slicer_log(size=100):
     phase = distance * 0.38 + 0.3 * np.sin(distance * 0.1)   # ring width changes slowly
     wood = 1200 + 1300 * (np.sin(phase) + 1) / 2
     radius = size / 2 - 1
-    wood[distance < 3] = 300                      # soft center (pith)
+    wood[distance < 3] = 800                      # soft center (pith)
     wood[distance > radius - 4] = 3400            # bright bark layer
     wood[distance > radius] = 0                   # air around the trunk
     return wood.astype(np.uint16)
