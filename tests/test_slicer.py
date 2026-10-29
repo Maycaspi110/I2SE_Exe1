@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 from src.slicer import distance, unit_step
-
+from src.slicer import project_plane_fast
 
 def test_distance_3_4_5():
     # Classic Pythagoras triangle: 3, 4, 5.
@@ -90,7 +90,7 @@ def test_project_plane_constant_volume():
     assert image.ndim == 2
     assert image.max() == 5      # plane pixels read the cube
     assert image[0, 0] == 0      # corner outside the triangle stays black
-    
+
 
 """ Test 2: Anything that does not return the value 9 is not contained within 
 therefore, everything is 0—that is, black."""
@@ -101,3 +101,19 @@ def test_project_plane_outside_is_black():
     image = project_plane(volume, [100, 100, 100], [100, 100, 100],
                           [105, 110, 100], [95, 110, 100])
     assert image.max() == 0
+
+
+def test_fast_matches_slow_triangle():
+    # The fast version must give exactly the same image as the slow one
+    volume = np.random.randint(0, 256, (30, 30, 30), dtype=np.uint8)
+    args = ([15, 2, 15], [15, 2, 15], [5, 25, 15], [25, 25, 15])
+    assert np.array_equal(project_plane(volume, *args),
+                          project_plane_fast(volume, *args))
+
+
+def test_fast_matches_slow_trapezoid():
+    # Trapezoid: the two runners start at different points
+    volume = np.random.randint(0, 256, (30, 30, 30), dtype=np.uint8)
+    args = ([10, 2, 12], [20, 2, 12], [5, 25, 12], [25, 25, 12])
+    assert np.array_equal(project_plane(volume, *args),
+                          project_plane_fast(volume, *args))
