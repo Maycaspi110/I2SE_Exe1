@@ -97,9 +97,7 @@ if __name__ == "__main__":
         print(f"created images/{name}.png")
     cv2.imwrite("images/overview.png", np.vstack(figures))
     print("created images/overview.png")
-    strips = [filmstrip(f"video/tree_trunk_slicer_{k}.mp4", c) for k, c in
-              [("sweep", "Video of trunk_sweep.csv: the plane moves along the trunk (cross-sections)"),
-               ("rotate", "Video of trunk_rotate.csv: a lengthwise plane turns around the trunk axis"),
-               ("tilt", "Video of trunk_tilt.csv: the plane tilts from a cross-section to a lengthwise cut")]]
-    cv2.imwrite("images/video_frames.png", np.vstack(strips))
+    strip = filmstrip("video/tree_trunk_slicer_tilt.mp4",
+                      "Video of trunk_tilt.csv: the plane tilts from a cross-section to a lengthwise cut")
+    cv2.imwrite("images/video_frames.png", strip)
     print("created images/video_frames.png")

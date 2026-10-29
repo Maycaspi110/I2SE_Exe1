@@ -31,7 +31,7 @@ python Ex0.py file.nrrd file.csv file.mp4
 Example, with the files of this repository:
 ```bash
 pip install -r requirements.txt
-python Ex0.py data-NRRD/tree_trunk.nrrd data-CSV/trunk_rotate.csv video/result.mp4
+python Ex0.py data-NRRD/tree_trunk_slicer.nrrd data-CSV/trunk_tilt.csv video/result.mp4
 ```
 
 The `<file.csv>` has one plane per row, either 9 numbers (triangle a, b, c) or 12 numbers
@@ -52,25 +52,25 @@ are also accepted, see `data-CSV/trunk_rotate.csv`.
 | `SRS.md`, `algorithm_design.md`, `DATASET.md`, `TESTING.md` | Requirements, algorithm, data set and test strategy |
 
 ## 5. Experiment and Results
-The experiment runs the demo on two synthetic "tree trunk" volumes (100x100x100): the 8-bit
-trunk `tree_trunk.nrrd`, and a 16-bit trunk `tree_trunk_slicer.nrrd` with a 3D Slicer header
-(orientation, voxel size in mm), which can be opened in 3D Slicer. Each volume is cut by three plane files:
+The experiment runs the demo on a synthetic "tree trunk" volume (100x100x100, 16-bit),
+`data-NRRD/tree_trunk_slicer.nrrd`. It has a 3D Slicer header (orientation, voxel size in mm), so it also
+opens in 3D Slicer. The plane file `data-CSV/trunk_tilt.csv` has 120 trapezoids: the plane tilts from a
+cross-section to a lengthwise cut.
 
-| Plane file | Planes | What the video shows |
-|------------|--------|----------------------|
-| `trunk_sweep.csv` | 90 triangles | The plane moves along the trunk axis: cross-sections |
-| `trunk_rotate.csv` | 120 trapezoids | A lengthwise plane turns around the trunk axis |
-| `trunk_tilt.csv` | 120 trapezoids | The plane tilts from a cross-section to a lengthwise cut |
+```bash
+python Ex0.py data-NRRD/tree_trunk_slicer.nrrd data-CSV/trunk_tilt.csv video/tree_trunk_slicer_tilt.mp4
+```
 
 Expected and observed results:
 - A cross-section of the trunk shows concentric circles, a lengthwise cut shows stripes, an oblique cut shows ellipses.
-  This is what the images and the videos show.
-- Parts of a plane outside the volume are black (0), and every video has one frame per CSV row.
+  This is what the images and the video show.
+- Parts of a plane outside the volume are black (0), and the video has one frame per CSV row (120).
 - Speed: the vectorized projection reaches about **230 frames per second** on a 500x500x500 byte volume
   (`python -m scripts.benchmark`), above the required 30 and the 100 target.
 
 ![Cross-sections of the two tree trunk volumes](images/overview.png)
 
-![Frames taken from the result videos of the 16-bit trunk](images/video_frames.png)
+![Frames taken from the result video](images/video_frames.png)
 
-The result videos are in `video/`, for example `video/tree_trunk_rotate.mp4` and `video/tree_trunk_slicer_tilt.mp4`.
+The result video is `video/tree_trunk_slicer_tilt.mp4`. The other plane files in `data-CSV/` (`trunk_sweep.csv`,
+`trunk_rotate.csv`) and the 8-bit trunk `data-NRRD/tree_trunk.nrrd` can be used the same way.
