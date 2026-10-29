@@ -33,6 +33,7 @@ python Ex0.py <volume.nrrd> <planes.csv> <output.mp4>
 - **Planes (.csv):** each row is one plane, given by 3 or 4 points with x,y,z each.
   - 9 numbers = isosceles triangle.
   - 12 numbers = isosceles trapezoid.
+  - A header line and a first column with the number of points (3 or 4) are also accepted.
 
 **Output**
 - **Video (.mp4):** one frame per CSV row, in the same order as the rows. The video is grayscale, at 30 FPS. All frames have the same fixed size: the largest width and the largest height among all the planes.

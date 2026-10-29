@@ -30,7 +30,7 @@ The projection is run on synthetic volumes where the correct result is known.
 ## 4. Level 3: Demo Test (end to end)
 Run the demo exactly as a user would:
 
-    python Ex0.py synthetic_log.nrrd planes.csv output.mp4
+    python Ex0.py data-NRRD/tree_trunk.nrrd data-CSV/trunk_rotate.csv output.mp4
 
 | ID | Check | Expected result |
 |----|-------|-----------------|
@@ -42,7 +42,7 @@ Run the demo exactly as a user would:
 | E6 | run on D1 (MRI) | video opens, anatomy is visible (visual check) |
 
 ## 5. Performance Test
-Run on D3 (500x500x500) and measure frames per second.
+Run `python -m scripts.benchmark` (500x500x500 volume) and read the frames per second.
 Pass: at least 30 fps. Target: 100 fps.
 
 ## 6. How to Run

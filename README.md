@@ -10,7 +10,7 @@ Scan the 3D matrix M along the given plane p and project the sampled values onto
 - Any sampled point along the plane that falls outside the boundaries of M is assigned a value of `0`.
 - **Performance Requirement:** Given a 500^3 byte matrix, the projection algorithm must run at a minimum of **30 FPS**, aiming for **100+ FPS**.
 
-![Task overview: a 3D matrix M is sampled along a plane p and projected onto a 2D image E](task-overview.svg)
+![Task overview: a 3D matrix M is sampled along a plane p and projected onto a 2D image E](images/task-overview.svg)
 
 ## 2. Project Scope
 ### Inputs:
@@ -26,3 +26,51 @@ Scan the 3D matrix M along the given plane p and project the sampled values onto
 ## 3. How to Run
 ```bash
 python Ex0.py file.nrrd file.csv file.mp4
+```
+
+Example, with the files of this repository:
+```bash
+pip install -r requirements.txt
+python Ex0.py data-NRRD/tree_trunk.nrrd data-CSV/trunk_rotate.csv video/result.mp4
+```
+
+The `<file.csv>` has one plane per row, either 9 numbers (triangle a, b, c) or 12 numbers
+(trapezoid a', b, a'', c). A header line and a first column with the number of points (3 or 4)
+are also accepted, see `data-CSV/trunk_rotate.csv`.
+
+## 4. Project Structure
+| Path | Content |
+|------|---------|
+| `Ex0.py` | The demo "main" |
+| `src/` | The code: volume loading, CSV reading, projection, normalization, framing, video writing |
+| `tests/` | Unit tests (`pytest tests/`) |
+| `data-NRRD/` | The NRRD volumes (see DATASET.md) |
+| `data-CSV/` | The plane files |
+| `scripts/` | Scripts that create the data, the benchmark and the images |
+| `video/` | Result videos of the experiment |
+| `images/` | Illustration images |
+| `SRS.md`, `algorithm_design.md`, `DATASET.md`, `TESTING.md` | Requirements, algorithm, data set and test strategy |
+
+## 5. Experiment and Results
+The experiment runs the demo on two synthetic "tree trunk" volumes (100x100x100): the 8-bit
+trunk `tree_trunk.nrrd`, and a 16-bit trunk `tree_trunk_slicer.nrrd` with a 3D Slicer header
+(orientation, voxel size in mm), which can be opened in 3D Slicer. Each volume is cut by three plane files:
+
+| Plane file | Planes | What the video shows |
+|------------|--------|----------------------|
+| `trunk_sweep.csv` | 90 triangles | The plane moves along the trunk axis: cross-sections |
+| `trunk_rotate.csv` | 120 trapezoids | A lengthwise plane turns around the trunk axis |
+| `trunk_tilt.csv` | 120 trapezoids | The plane tilts from a cross-section to a lengthwise cut |
+
+Expected and observed results:
+- A cross-section of the trunk shows concentric circles, a lengthwise cut shows stripes, an oblique cut shows ellipses.
+  This is what the images and the videos show.
+- Parts of a plane outside the volume are black (0), and every video has one frame per CSV row.
+- Speed: the vectorized projection reaches about **230 frames per second** on a 500x500x500 byte volume
+  (`python -m scripts.benchmark`), above the required 30 and the 100 target.
+
+![Cross-sections of the two tree trunk volumes](images/overview.png)
+
+![Frames taken from the result videos of the 16-bit trunk](images/video_frames.png)
+
+The result videos are in `video/`, for example `video/tree_trunk_rotate.mp4` and `video/tree_trunk_slicer_tilt.mp4`.
