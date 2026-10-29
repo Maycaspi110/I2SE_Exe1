@@ -46,3 +46,30 @@ def build_row(volume, a1, a2):
         row.append(sample_voxel(volume, p))
         p = p + step                 # move one step forward
     return row
+
+#Constructing a 2D image of the plane using two runners, a1 and a2.
+def project_plane(volume, start1, start2, b, c):
+    #a1 and a2 from start 1 and start 2 run to b and c 
+    start1 = np.asarray(start1, dtype=np.float64)
+    start2 = np.asarray(start2, dtype=np.float64)
+
+    height = int(np.ceil(distance(start1, b)))   # number of rows (Dab)
+    width = int(np.ceil(distance(b, c)))         # widest row (Dbc)
+    image = np.zeros((height, width + 1), dtype=volume.dtype)  # all black
+
+    step1 = unit_step(start1, b)   
+    step2 = unit_step(start2, c)  
+    a1, a2 = start1, start2
+
+    for y in range(height):
+        a1 = a1 + step1
+        a2 = a2 + step2
+        row = build_row(volume, a1, a2)
+        
+        # Center the row inside the image width
+        x_start = int(round((width - len(row)) / 2))
+        for i, value in enumerate(row):
+            x = x_start + i
+            if 0 <= x < image.shape[1]:    # ignore writes outside the image
+                image[y, x] = value
+    return image

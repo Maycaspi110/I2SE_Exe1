@@ -71,3 +71,33 @@ def test_build_row_reads_along_a_line():
 def test_build_row_same_point_is_one_pixel():
     volume = np.full((2, 2, 2), 9)
     assert build_row(volume, [1, 1, 1], [1, 1, 1]) == [9]
+
+
+from src.slicer import project_plane
+
+
+"""
+We have a function that takes a cube and a triangle as input and returns an image.
+
+Test 1":
+Construct a cube—a 20×20×20 cube works well—where every cell contains the number 5; essentially a uniform block consisting entirely of "5"s. Place a triangle inside it. 
+If the result is 5, we know that the point lies inside."""
+def test_project_plane_constant_volume():
+    volume = np.full((20, 20, 20), 5, dtype=np.uint8)
+    # Triangle in the z=10 layer, apex (10,0,10), base (5..15, 10, 10)
+    image = project_plane(volume, [10, 0, 10], [10, 0, 10],
+                          [5, 10, 10], [15, 10, 10])
+    assert image.ndim == 2
+    assert image.max() == 5      # plane pixels read the cube
+    assert image[0, 0] == 0      # corner outside the triangle stays black
+    
+
+""" Test 2: Anything that does not return the value 9 is not contained within 
+therefore, everything is 0—that is, black."""
+
+def test_project_plane_outside_is_black():
+    volume = np.full((5, 5, 5), 9, dtype=np.uint8)
+    # Plane far away from the cube: the whole image is black
+    image = project_plane(volume, [100, 100, 100], [100, 100, 100],
+                          [105, 110, 100], [95, 110, 100])
+    assert image.max() == 0
